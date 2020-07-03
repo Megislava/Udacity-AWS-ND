@@ -10,44 +10,26 @@ Resources:
   UdacityS3ReadOnlyEC2:
     Type: AWS::IAM::Role
     Properties:
-        Description: Role for handeling EC2 Instances
-        AssumeRolePolicyDocument:
-            Version: 2012-10-17
-            Statement:
-            -   Effect: Allow
-                Principal:
-                    Service:
-                    - ec2.amazonaws.com
-                Action:
-                - 'sts:AssumeRole'
-        Path: /       
-        RoleName: 
-            !Sub ${EnvironmentName}-Role
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "ec2.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
 
-  RolePolicies:
-    Type: AWS::IAM::Policy
-    Properties:
-        PolicyName: AmazonS3ReadOnlyAccess
-        PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-            - 
-                Effect: Allow
-                Action: 
-                -   s3:Get*
-                -   s3:List*
-                Resource: 
-                -   arn:aws:s3:::udacity-aws-nd-project-2
-                -   arn:aws:s3:::udacity-aws-nd-project-2/*
-        Roles:
-        -   Ref: UdacityS3ReadOnlyEC2
-
-  ProfileWithRolesForOurApp:
+  ProfileWithRolesForApp:
     Type: AWS::IAM::InstanceProfile
     Properties:
-        Path: "/"
-        Roles:
-        - Ref: UdacityS3ReadOnlyEC2
+      Path: "/"
+      Roles:
+        - !Ref UdacityS3ReadOnlyEC2
 
   LBSecGroup:
     Type: AWS::EC2::SecurityGroup
@@ -103,9 +85,11 @@ Resources:
           aws s3 cp s3://udacity-aws-nd-project-2/udacity.zip .
           unzip -o udacity.zip
       ImageId: ami-005bdb005fb00e791
+      IamInstanceProfile: !Ref EC2InstanceProfileRole
       SecurityGroups:
-      - Ref: WebServerSecGroup
-      InstanceType: t3.small
+       - Fn::ImportValue: 
+          !Sub "${EnvironmentName}-WebSecurityGroupID"
+      InstanceType: t2.medium
       BlockDeviceMappings:
       - DeviceName: "/dev/sdk"
         Ebs:
