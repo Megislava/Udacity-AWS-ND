@@ -1,5 +1,5 @@
 Description: >
-  Anna Jungmannova / Udacity Project - deploying
+  Anna Jungmannova / Udacity Project 2 - Deploying a high-availability webapp
 
 Parameters: 
   EnvironmentName:
@@ -10,18 +10,19 @@ Resources:
   UdacityS3ReadOnlyEC2:
     Type: AWS::IAM::Role
     Properties:
-        RoleName: 
-            !Sub ${EnvironmentName}-Role
+        Description: Role for handeling EC2 Instances
         AssumeRolePolicyDocument:
-            Version: "2012-10-17"
+            Version: 2012-10-17
             Statement:
             -   Effect: Allow
                 Principal:
                     Service:
                     - ec2.amazonaws.com
                 Action:
-                - sts:AssumeRole
-        Path: "/"
+                - 'sts:AssumeRole'
+        Path: /       
+        RoleName: 
+            !Sub ${EnvironmentName}-Role
 
   RolePolicies:
     Type: AWS::IAM::Policy
@@ -36,8 +37,8 @@ Resources:
                 -   s3:Get*
                 -   s3:List*
                 Resource: 
-                -   arn:aws:s3:::udacity-demo-1
-                -   arn:aws:s3:::udacity-demo-1/*
+                -   arn:aws:s3:::udacity-aws-nd-project-2
+                -   arn:aws:s3:::udacity-aws-nd-project-2/*
         Roles:
         -   Ref: UdacityS3ReadOnlyEC2
 
@@ -171,7 +172,7 @@ Resources:
         Fn::ImportValue:
           Fn::Sub: "${EnvironmentName}-VPCID"
 
-Output:
+Outputs:
   WebAppLBDNSName:
     Description: DNS Name or Public URL of LB
     Value: !Join ["", ["http://", !GetAtt WebAppLB.DNSName]]

@@ -1,5 +1,5 @@
 Description: >
-  Anna Jungmannova / Udacity AWS ND - Infrastructure Diagram
+  Anna Jungmannova / Udacity Project 2 - Deploying a high-availability webapp
 
 Parameters:
   EnvironmentName:
@@ -64,24 +64,24 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
           - Key: Name
-            Value: !Sub ${EnvironmentName} Private Subnet (AZ1)
+            Value: !Sub ${EnvironmentName} Public Subnet (AZ1)
 
   PublicSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: !Select [1, !GetAZs '' ]
+      AvailabilityZone: !Select [ 1 , !GetAZs '' ]
       CidrBlock: !Ref PublicSubnet2CIDR
       MapPublicIpOnLaunch: true
       Tags:
           - Key: Name
-            Value: !Sub ${EnvironmentName} Private Subnet (AZ2)
+            Value: !Sub ${EnvironmentName} Public Subnet (AZ2)
   
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: !Select [0, !GetAZs '']
+      AvailabilityZone: !Select [ 0 , !GetAZs '']
       CidrBlock: !Ref PrivateSubnet1CIDR
       MapPublicIpOnLaunch: false
       Tags:
@@ -92,7 +92,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: !Select [1, !GetAZs '']
+      AvailabilityZone: !Select [ 1 , !GetAZs '']
       CidrBlock: !Ref PrivateSubnet2CIDR
       MapPublicIpOnLaunch: false
       Tags:
